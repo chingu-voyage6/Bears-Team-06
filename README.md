@@ -4,4 +4,4 @@ Add-project-description-here | Chingu Voyage-6 | https://chingu.io/
 ## Members
 - [Alex Luong](https://github.com/alexluong)
 - Merline
-- Ilya
+- Ilya(https://github.com/hero931)
