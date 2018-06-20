@@ -32,30 +32,43 @@ function* socialSignIn(action) {
   yield call(callGetUser, token);
 }
 
-function* signIn(action) {
-  try {
-    const {
-      payload: { username, password },
-    } = action;
+function* signIn({ payload }) {
+  const { username, password } = payload;
 
-    //* Sign in
-    const response = yield call(postAPI, `${SERVER_URI}/auth/local/signin`, {
-      username,
-      password,
+  if (username === 'username' && password === 'password') {
+    yield put({
+      type: SIGN_IN_SUCCESS,
     });
-
-    //* Save token to localStorage
-    const token = response.data.token;
-    setItem('accessToken', token);
-
-    yield call(callGetUser, token);
-  } catch (error) {
-    // TODO: Gotta change from AUTH_ERROR to SIGN_IN_ERROR
+  } else {
     yield put({
       type: AUTH_ERROR,
-      payload: error.response.data,
+      payload: {
+        error: 'Username and password incorrect',
+      },
     });
   }
+
+  // try {
+  //   const { username, password } = payload;
+
+  //   //* Sign in
+  //   const response = yield call(postAPI, `${SERVER_URI}/auth/local/signin`, {
+  //     username,
+  //     password,
+  //   });
+
+  //   //* Save token to localStorage
+  //   const token = response.data.token;
+  //   setItem('accessToken', token);
+
+  //   yield call(callGetUser, token);
+  // } catch (error) {
+  //   // TODO: Gotta change from AUTH_ERROR to SIGN_IN_ERROR
+  //   yield put({
+  //     type: AUTH_ERROR,
+  //     payload: error.response.data,
+  //   });
+  // }
 }
 
 function* signInWatcher() {
