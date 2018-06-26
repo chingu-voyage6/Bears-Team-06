@@ -11,18 +11,17 @@ router.get('/google', passport.authenticate('google',{
     scope:['profile']
 }));
 
-router.get('/auth/google/callback',
+router.get('/google/redirect', 
   passport.authenticate('google', { failureRedirect: '/login' }),
- function(req, res) {
- // Successful authentication, redirect home.
- res.redirect('/');
-});
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
 
 //auth with facebook
-router.get('/facebook',
-  passport.authenticate('facebook'));
+router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('/auth/facebook/callback',
+router.get('/facebook/redirect',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
