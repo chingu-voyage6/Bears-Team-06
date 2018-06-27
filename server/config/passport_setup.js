@@ -1,7 +1,7 @@
 const passport  = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const keys = require('./pass_keys');
+const keys = require('./keys');
 const User = require('../models/user_model');
 
 passport.use(
