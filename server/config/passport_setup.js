@@ -14,13 +14,13 @@ passport.use(
         callbackURL: '/auth/google/redirect'
     }, (accessToken, refreshToken, profile, done) => {
         // check if user already exists in our own db
-        User.findOne({googleId: profile.id}).then((currentUser) => {
+        User.findOne({token: profile.id}).then((currentUser) => {
             if(currentUser){
                 return done(null, currentUser);
             } else {
                 // if not, create user in our db
                 new User({
-                    googleId: profile.id,
+                    token: profile.id,
                     username: profile.displayName
                 }).save().then((newUser) => {
                     return done(null, newUser);
@@ -43,7 +43,7 @@ passport.use(
         } else {
             // if not, create user in our db
             new User({
-                facebookId: profile.id,
+                token: profile.id,
                 username: profile.displayName
             }).save().then((newUser) => {
                 return done(null, newUser);
@@ -55,8 +55,9 @@ passport.use(
 
 passport.use('local-signup', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
-        passwordField : 'password',
+        username: 'username',
+        email:'email',
+        password: 'password',
         passReqToCallback : true // allows us to pass back the entire request to the callback
     },
     function(req, email, password, done) {
@@ -69,8 +70,9 @@ passport.use('local-signup', new LocalStrategy({
         // see if the user trying to login already exists
         User.findOne({ 'local.email' :  email }, function(err, user) {
             // if there are any errors, return the error
-            if (err)
+            if (err) {
                 return done(err);
+            }
 
             // check to see if theres already a user with that email
             if (user) {
@@ -82,7 +84,8 @@ passport.use('local-signup', new LocalStrategy({
                 var newUser            = new User();
 
                 // set the user's local credentials
-                newUser.local.email    = email;
+                newUser.local.email = email;
+                newUser.local.username = username;
                 newUser.local.password = newUser.generateHash(password);
 
                 // save the user
@@ -97,29 +100,36 @@ passport.use('local-signup', new LocalStrategy({
 }));
 
 passport.use('local-login', new LocalStrategy({
-    usernameField : 'email',
-    passwordField : 'password',
+    username: 'username',
+    email:'email',
+    password: 'password',
     passReqToCallback : true // allows us to pass back the entire request to the callback
 },
-function(req, email, password, done) { // callback with email and password from our form
+function(req, email, password, done) {
 
     // if the user trying to login already exists
     User.findOne({ 'local.email' :  email }, function(err, user) {
         // if there are any errors, return the error before anything else
-        if (err)
+        if (err) {
             return done(err);
+        }
 
         // if no user is found, return the message
-        if (!user)
+        if (!user) {
             return done(null, false);
             //TODO:send a message about no user
+        }
 
         // if the user is found but the password is wrong
-        if (!user.validPassword(password))
+        if (!user.validPassword(password)) {
             return done(null, false);
             //TODO:send a message about wrong password
+        }
 
         // all is well, return successful user
         return done(null, user);
     });
 }));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());

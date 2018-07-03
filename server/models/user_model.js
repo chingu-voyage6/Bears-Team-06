@@ -6,20 +6,19 @@ const Schema = mongoose.Schema;
 // define the schema for our user model
 var userSchema = new Schema({
     local            : {
+        username     : String,
         email        : String,
-        password     : String,
+        password     : String
     },
     facebook         : {
         id           : String,
         token        : String,
-        name         : String,
-        email        : String
+        username     : String
     },
     google           : {
         id           : String,
         token        : String,
-        email        : String,
-        name         : String
+        username     : String
     }
 });
 
