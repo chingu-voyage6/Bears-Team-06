@@ -1,77 +1,63 @@
 const router = require('express').Router();
 const passport = require('passport');
-const User = require('../models/user_model');
+const User = require('../models/user');
+const jwt = require('jwt-simple');
 
-//is authenticated
-router.get("/isAuthenticated",function(req,res){
-	if (req.isAuthenticated()){
-		res.json({
-			userId: req.user._id,
-			username: req.user.username,
-			isAuthenticated: true
-		});
-	} else {
-		res.json({
-			userId: null,
-			username: null,
-			isAuthenticated: false
-		});
-	}
+// Generates a JWT token.
+function tokenForUser(user) {
+  const timestamp = new Date().getTime();
+  return jwt.encode({ sub: user, iat: timestamp }, 'bears');
+}
+
+
+router.get('/google', passport.authenticate('google', { scope: 'profile email' }));
+router.get('/google/redirect', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+	res.json({
+	  userId: req.user._id,
+  	  username: req.user.name,
+  	  email: req.user.email,
+  	  token: tokenForUser(req.user._id)
+    });
 });
 
-//auth with google
-router.get('/google', passport.authenticate('google',{
-    scope:['profile']
-}));
 
-router.get('/google/redirect',
-  passport.authenticate('google', function(req,res){
-  	// console.log(req.user);
-  	res.json({
-  		userId: req.user._id,
-  		username: req.user.username,
-  		isAuthenticated: true
-  	});
- });
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
+router.get('/facebook/redirect', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
+        res.json({
+    		userId: req.user._id,
+    		username: req.user.name,
+			email: req.user.email,
+			token: tokenForUser(req.user._id)
+    	});
+});
 
-//auth with facebook
-router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('/facebook/redirect',
-  passport.authenticate('facebook', function(req,res){
-  	// console.log(req.user);
-  	res.json({
-  		userId: req.user._id,
-  		username: req.user.username,
-  		isAuthenticated: true
-  	});
-  });
 
-//login with email
-router.post("/login",passport.authenticate('local') ,function(req,res){
+router.post("/login",passport.authenticate('login') ,function(err, user, info){
 	// console.log(req.user);
 	res.json({
 		userId: req.user._id,
-		username: req.user.username,
-		isAuthenticated: true
+		username: req.user.name,
+		email: req.user.email,
+		token: tokenForUser(req.user._id)
 	});
 });
 //signup with email
-router.post("/signup",function(req,res){
+router.post("/signup",passport.authenticate('signup'), function(req,res){
+	console.log(req.body);
 	const newUser = req.body;
-	User.register(newUser,newUser.password,(err,user)=>{
+	User.findOne(newUser,newUser.password,(err,user)=>{
 		if (err){ return res.json(err.message); }
 		res.json({
-			userId: user._id,
-			username: user.username,
-			isAuthenticated: true
+			userId: req.user._id,
+			username: req.user.email,
+			email: req.user.email,
+			token: tokenForUser(req.user._id)
 		});
+
 	});
 });
 
-router.get('/logout', function(req, res) {
-	req.logout();
-	res.json();
-});
+
 
 module.exports = router;
