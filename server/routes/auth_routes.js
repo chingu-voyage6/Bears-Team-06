@@ -1,42 +1,63 @@
 const router = require('express').Router();
 const passport = require('passport');
+const User = require('../models/user');
+const jwt = require('jwt-simple');
 
-//auth logout
-router.get('/logout', (req, res) => {
+// Generates a JWT token.
+function tokenForUser(user) {
+  const timestamp = new Date().getTime();
+  return jwt.encode({ sub: user, iat: timestamp }, 'bears');
+}
 
+
+router.get('/google', passport.authenticate('google', { scope: 'profile email' }));
+router.get('/google/redirect', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+	res.json({
+	  userId: req.user._id,
+  	  username: req.user.name,
+  	  email: req.user.email,
+  	  token: tokenForUser(req.user._id)
+    });
 });
 
-//auth with google
-router.get('/google', passport.authenticate('google',{
-    scope:['profile']
-}));
 
-router.get('/google/redirect',
-  passport.authenticate('google', {
-      successRedirect : '/profile',
-      failureRedirect : '/signup'
-  }));
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
+router.get('/facebook/redirect', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
+        res.json({
+    		userId: req.user._id,
+    		username: req.user.name,
+			email: req.user.email,
+			token: tokenForUser(req.user._id)
+    	});
+});
 
-//auth with facebook
-router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('/facebook/redirect',
-  passport.authenticate('facebook', {
-      successRedirect : '/profile',
-      failureRedirect : '/signup'
-  }));
 
-//login with email
-router.post('/login',
-   passport.authenticate('local', {
-       successRedirect : '/profile',
-       failureRedirect : '/signup'
-   }));
-
+router.post("/login",passport.authenticate('login') ,function(err, user, info){
+	// console.log(req.user);
+	res.json({
+		userId: req.user._id,
+		username: req.user.name,
+		email: req.user.email,
+		token: tokenForUser(req.user._id)
+	});
+});
 //signup with email
-router.post('/signup', passport.authenticate('local-signup', {
-        successRedirect : '/profile',
-        failureRedirect : '/signup'
-    }));
+router.post("/signup",passport.authenticate('signup'), function(req,res){
+	console.log(req.body);
+	const newUser = req.body;
+	User.findOne(newUser,newUser.password,(err,user)=>{
+		if (err){ return res.json(err.message); }
+		res.json({
+			userId: req.user._id,
+			username: req.user.email,
+			email: req.user.email,
+			token: tokenForUser(req.user._id)
+		});
+
+	});
+});
+
+
 
 module.exports = router;
