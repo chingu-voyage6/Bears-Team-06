@@ -5,7 +5,7 @@ import throttle from 'lodash/throttle';
 import sagas from 'modules/sagas';
 import reducers from 'modules/reducers';
 
-import { getItem, setItem } from 'lib';
+import { getItem, setItem } from 'utilities/localStorage';
 
 //* Middlewares
 const sagaMiddleware = createSagaMiddleware();
@@ -24,10 +24,10 @@ sagaMiddleware.run(sagas);
 //* Persist
 store.subscribe(
   throttle(() => {
-    const { auth, user } = store.getState();
+    const { user } = store.getState();
 
-    if (auth.authenticated) {
-      setItem('state', { auth, user });
+    if (user.authenticated) {
+      setItem('state', { user });
     }
   }, 1000),
 );

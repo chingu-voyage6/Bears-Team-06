@@ -1,8 +1,9 @@
 import { all } from 'redux-saga/effects';
 
-import getUserWatcher from './getUser';
-import updateAvatarWatcher from './updateAvatar';
+import signInWatcher from './signIn';
+// import signUpWatcher from './signUp';
+// import signOutWatcher from './signOut';
 
 export function* userSaga() {
-  yield all([getUserWatcher(), updateAvatarWatcher()]);
+  yield all([signInWatcher()]);
 }

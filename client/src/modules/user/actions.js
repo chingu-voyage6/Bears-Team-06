@@ -1,28 +1,12 @@
-import {
-  GET_USER_REQUEST,
-  UPDATE_USER_REQUEST,
-  UPDATE_AVATAR_REQUEST,
-} from './types';
+import { createActions } from 'redux-actions';
+import * as TYPES from './types';
 
-const getUser = token => ({
-  type: GET_USER_REQUEST,
-  payload: {
-    token,
+const actionCreators = createActions(
+  {
+    [TYPES.SIGN_IN]: [({ values }) => values, ({ actions }) => actions],
   },
-});
+  TYPES.SIGN_UP,
+  TYPES.SIGN_OUT,
+);
 
-const updateUser = user => ({
-  type: UPDATE_USER_REQUEST,
-  payload: {
-    user,
-  },
-});
-
-const updateAvatar = avatar => ({
-  type: UPDATE_AVATAR_REQUEST,
-  payload: {
-    avatar,
-  },
-});
-
-export { getUser, updateUser, updateAvatar };
+export const { signIn, signUp, signOut } = actionCreators;
