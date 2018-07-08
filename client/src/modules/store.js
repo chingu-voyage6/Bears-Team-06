@@ -1,16 +1,12 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import createSagaMiddleware from 'redux-saga';
+import thunk from 'redux-thunk';
 import throttle from 'lodash/throttle';
-
-import sagas from 'modules/sagas';
 import reducers from 'modules/reducers';
-
 import { getItem, setItem } from 'utilities/localStorage';
 
 //* Middlewares
-const sagaMiddleware = createSagaMiddleware();
 const enhancers = compose(
-  applyMiddleware(sagaMiddleware),
+  applyMiddleware(thunk),
   window.devToolsExtension ? window.devToolsExtension() : f => f,
 );
 
@@ -19,7 +15,6 @@ const persistedState = getItem('state');
 
 //* Create store
 const store = createStore(reducers, persistedState, enhancers);
-sagaMiddleware.run(sagas);
 
 //* Persist
 store.subscribe(

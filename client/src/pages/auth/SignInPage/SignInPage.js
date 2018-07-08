@@ -13,7 +13,7 @@ import validate from 'utilities/validate';
 
 class SignInPage extends React.Component {
   submit = (values, actions) => {
-    this.props.signIn({ values, actions });
+    this.props.signIn(values);
   };
 
   render() {
