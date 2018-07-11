@@ -126,53 +126,7 @@ passport.use(
 }));
 
 
-passport.use('signup', new LocalStrategy({
-        usernameField:'email',
-        passwordField: 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
-    },
-    function(req, email, password, done) {
-
-        // asynchronous
-        // User.findOne wont fire unless data is sent back
-        process.nextTick(function() {
-
-        // find a user whose email is the same as the forms email
-        // see if the user trying to login already exists
-        User.findOne({ 'local.email' :  email }, function(err, user) {
-            // if there are any errors, return the error
-            if (err) {
-                return done(err);
-            }
-
-            // check to see if theres already a user with that email
-            if (user) {
-                return done(null, false);
-            } else {
-
-                // if there is no user with that email
-                // create the user
-                var user            = new User();
-
-                // set the user's local credentials
-                user.local.email    = email;
-                user.local.password = user.generateHash(password);
-
-                // save the user
-                user.save(function(err) {
-                    if (err){
-                        return done(err);
-                    } else {
-                        console.log("saving user ...");
-                       return done(null, user);
-                    }
-                });
-            }
-        });
-    });
-}));
-
-passport.use('login', new LocalStrategy({
+passport.use(new LocalStrategy({
     usernameField:'email',
     passwordField: 'password',
     passReqToCallback : true // allows us to pass back the entire request to the callback
@@ -183,19 +137,17 @@ function(req, email, password, done) {
     User.findOne({ 'local.email' :  email }, function(err, user) {
         // if there are any errors, return the error before anything else
         if (err) {
-            return done(err);
+          return done(err, {message: 'error in finding user'});
         }
 
         // if no user is found, return the message
         if (!user) {
-            return done(null, false);
-            //TODO:send a message about no user
+          return done(null, false, {message: 'No user found'});
         }
 
         // if the user is found but the password is wrong
         if (!user.validPassword(password)) {
-            return done(null, false);
-            //TODO:send a message about wrong password
+          return done(null, false, { message: 'Incorrect Password'});
         }
 
         // all is well, return successful user

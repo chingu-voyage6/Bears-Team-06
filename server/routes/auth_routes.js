@@ -19,9 +19,8 @@ router.get(
   (req, res) => {
     res.json({
       userId: req.user._id,
-      username: req.user.name,
-      email: req.user.email,
-      token: tokenForUser(req.user._id),
+      email: req.user.google.email,
+      token: tokenForUser(req.user._id)
     });
   },
 );
@@ -34,22 +33,31 @@ router.get(
   '/facebook/redirect',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   (req, res) => {
-    res.json({
+    res.status(200).json({
       userId: req.user._id,
-      username: req.user.name,
-      email: req.user.email,
-      token: tokenForUser(req.user._id),
+      email: req.user.facebook.email,
+      token: tokenForUser(req.user._id)
     });
   },
 );
 
-router.post('/login', passport.authenticate('login'), function(req, res) {
-  // console.log(req.user);
-  res.status(200).json({
-    userId: req.user._id,
-    email: req.user.local.email,
-    token: tokenForUser(req.user._id),
-  });
+router.post('/signin', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      res.status(400).send(info);
+      return;
+    }
+    //if user already exists or password error, return message
+    if (!user) {
+      res.status(400).send(info);
+      return;
+    }
+    res.status(200).json({
+      userId: user._id,
+      email: user.local.email,
+      token: tokenForUser(user._id)
+    });
+  })(req, res, next);
 });
 
 //signup with email
@@ -81,7 +89,6 @@ router.post('/signup', function(req, res) {
 
     // save the user
     user.save(function(err, savedUser) {
-      console.log(err);
       if (err) {
         res.status(500).send({ message: 'error adding user to db' });
         return;
@@ -89,8 +96,8 @@ router.post('/signup', function(req, res) {
 
       res.status(200).json({
         userId: savedUser._id,
-        email: savedUser.email,
-        token: tokenForUser(savedUser._id),
+        email: savedUser.local.email,
+        token: tokenForUser(savedUser._id)
       });
     });
   });
