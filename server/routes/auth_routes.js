@@ -43,16 +43,11 @@ router.get(
   },
 );
 
-router.post('/login', passport.authenticate('login'), function(
-  err,
-  user,
-  info,
-) {
+router.post('/login', passport.authenticate('login'), function(req, res) {
   // console.log(req.user);
-  res.json({
+  res.status(200).json({
     userId: req.user._id,
-    username: req.user.name,
-    email: req.user.email,
+    email: req.user.local.email,
     token: tokenForUser(req.user._id),
   });
 });
@@ -70,35 +65,34 @@ router.post('/signup', function(req, res) {
    */
 
   //* Response
-  User.findOne({'local.email' : email}, function(err, user){
-      if(user){
-        res.status(400).send({message:'user already exists'});
+  User.findOne({ 'local.email': email }, function(err, user) {
+    if (user) {
+      res.status(400).send({ message: 'user already exists' });
+      return;
+    }
+
+    // if there is no user with that email
+    // create the user
+    var user = new User();
+
+    // set the user's local credentials
+    user.local.email = email;
+    user.local.password = user.generateHash(password);
+
+    // save the user
+    user.save(function(err, savedUser) {
+      console.log(err);
+      if (err) {
+        res.status(500).send({ message: 'error adding user to db' });
         return;
       }
 
-      // if there is no user with that email
-      // create the user
-      var user            = new User();
-
-      // set the user's local credentials
-      user.local.email    = email;
-      user.local.password = user.generateHash(password);
-
-      // save the user
-      user.save(function(err, savedUser) {
-        console.log(err);
-          if (err){
-              res.status(500).send({message:'error adding user to db'});
-              return;
-          }
-
-          res.status(200).json({
-            userId: savedUser._id,
-            email: savedUser.email,
-            token: tokenForUser(savedUser._id)
-          });
+      res.status(200).json({
+        userId: savedUser._id,
+        email: savedUser.email,
+        token: tokenForUser(savedUser._id),
       });
-
+    });
   });
 });
 
