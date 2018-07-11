@@ -58,7 +58,17 @@ router.post('/login', passport.authenticate('login'), function(
 });
 //signup with email
 router.post('/signup', function(req, res) {
-  console.log(req.body);
+  const { email, password } = req.body;
+
+  //* Validate email + password
+
+  /**
+   * * Find user with this email
+   * * if user exists -> error
+   * * if not -> create new user
+   */
+
+  //* Response
   res.status(200).send({ message: 'data received' });
   // const newUser = req.body;
   // User.findOne(newUser,newUser.password,(err,user)=>{
