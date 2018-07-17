@@ -1,31 +1,24 @@
-import {
-  GET_USER_REQUEST,
-  GET_USER_SUCCESS,
-  GET_USER_ERROR,
-  // UPDATE_AVATAR_REQUEST,
-  // UPDATE_AVATAR_SUCCESS,
-} from './types';
+import * as TYPES from './types';
 
+//* Initial State
 const initialState = {
   user: null,
-  error: '',
+  authenticated: false,
+  role: 'guest',
 };
+
+//* Reducers
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case GET_USER_REQUEST:
-      return { ...state };
-    case GET_USER_SUCCESS:
+    case TYPES.SIGN_IN_SUCCESS:
+      const user = action.payload.user;
       return {
-        error: '',
-        user: action.payload.user,
-      };
-    case GET_USER_ERROR:
-      return {
-        error: action.payload.error,
-        user: null,
+        authenticated: true,
+        role: (user && user.role) || 'user',
+        profile: user,
       };
     default:
-      return { ...state };
+      return state;
   }
 };
 

@@ -1,28 +1,37 @@
-import {
-  GET_USER_REQUEST,
-  UPDATE_USER_REQUEST,
-  UPDATE_AVATAR_REQUEST,
-} from './types';
+import axios from 'axios';
+import * as TYPES from './types';
+import SERVER_URI from 'config/server';
 
-const getUser = token => ({
-  type: GET_USER_REQUEST,
-  payload: {
-    token,
-  },
-});
+const signIn = ({ email, password }) => dispatch => {
+  return new Promise(async (resolve, reject) => {
+    dispatch({ type: TYPES.SIGN_IN_REQUEST });
 
-const updateUser = user => ({
-  type: UPDATE_USER_REQUEST,
-  payload: {
-    user,
-  },
-});
+    try {
+      const response = await axios.post(`${SERVER_URI}/auth/signin`, {
+        email,
+        password,
+      });
 
-const updateAvatar = avatar => ({
-  type: UPDATE_AVATAR_REQUEST,
-  payload: {
-    avatar,
-  },
-});
+      dispatch({
+        type: TYPES.SIGN_IN_SUCCESS,
+        payload: {
+          user: response,
+        },
+      });
 
-export { getUser, updateUser, updateAvatar };
+      resolve();
+    } catch (error) {
+      dispatch({
+        type: TYPES.SIGN_IN_FAILURE,
+        error: true,
+        payload: {
+          message: error.response.data.message,
+        },
+      });
+
+      reject();
+    }
+  });
+};
+
+export { signIn };

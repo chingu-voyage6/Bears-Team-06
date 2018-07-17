@@ -1,4 +1,2 @@
-const SERVER_URI =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : '';
-
+const SERVER_URI = 'http://localhost:3000';
 export default SERVER_URI;
