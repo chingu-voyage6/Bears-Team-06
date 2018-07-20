@@ -17,6 +17,7 @@ router.get(
   '/google/redirect',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
+    req.session.user = user;
     res.json({
       userId: req.user._id,
       email: req.user.google.email,
@@ -33,6 +34,7 @@ router.get(
   '/facebook/redirect',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   (req, res) => {
+    req.session.user = user;
     res.status(200).json({
       userId: req.user._id,
       email: req.user.facebook.email,
@@ -52,6 +54,7 @@ router.post('/signin', function(req, res, next) {
       res.status(400).send(info);
       return;
     }
+    req.session.user = user;
     res.status(200).json({
       userId: user._id,
       email: user.local.email,
@@ -93,7 +96,7 @@ router.post('/signup', function(req, res) {
         res.status(500).send({ message: 'error adding user to db' });
         return;
       }
-
+      req.session.user = user;
       res.status(200).json({
         userId: savedUser._id,
         email: savedUser.local.email,
