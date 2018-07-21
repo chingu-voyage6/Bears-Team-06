@@ -4,10 +4,10 @@ const User = require('../models/user');
 
 //post goal
 router.post('/submit', function(req, res) {
-  const {goal, bounty_amount, non_profit, due_date } = req.body;
+  const {user_id, goal, bounty_amount, non_profit, due_date } = req.body;
 
     //is user set
-    if(!req.session || !req.user){
+    if(!user_id){
       res.status(500).send({ message: 'no user set' });
       return;
     }
@@ -15,7 +15,7 @@ router.post('/submit', function(req, res) {
     // create new goal
      var userGoal = new Goal();
 
-     userGoal.user_id = req.session.user.id;
+     userGoal.user_id = user_id;
      userGoal.goal = goal;
      userGoal.bounty_amount = bounty_amount;
      userGoal.non_profit = non_profit;
@@ -27,16 +27,27 @@ router.post('/submit', function(req, res) {
         return;
       }
 
-      res.status(200).json({
-        userId: savedGoal.user_id,
-        goalId: savedGoal._id,
-        goal: savedGoal.goal,
-        bounty_amount: savedGoal.bounty_amount,
-        non_profit: savedGoal.non_profit,
-        due_date: savedGoal.due_date
-      });
+      res.status(200).json({savedGoal});
     });
  });
+
+//get all goals
+router.get('/get/:user', function(req, res) {
+     // if no user set
+     if(!req.params.user){
+       res.status(500).send({ message: 'no user set' });
+       return;
+     }
+
+     //find all goals for one user
+     Goal.find({user_id:req.params.user } , function(err, goals){
+       if (err) {
+          res.status(500).send({ message: 'user has no goals' });
+          return;
+        }
+        res.status(200).json({goals});
+    });
+});
 
 
 module.exports = router;

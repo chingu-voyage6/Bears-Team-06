@@ -7,23 +7,13 @@ const LocalStrategy = require('passport-local').Strategy;
 const keys = require('./pass_keys');
 const User = require('../models/user');
 
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
-
 passport.use(
     new GoogleStrategy({
         // options for google strategy
         clientID: keys.google.clientID,
         clientSecret: keys.google.clientSecret,
         callbackURL: '/auth/google/redirect',
+        session: true,
         passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       if (req.user) {
@@ -78,6 +68,7 @@ passport.use(
     clientSecret:keys.facebook.clientSecret,
     callbackURL: '/auth/facebook/redirect',
     profileFields: ['name', 'email'],
+    session: true,
     passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
   if (req.user) {
@@ -129,6 +120,7 @@ passport.use(
 passport.use(new LocalStrategy({
     usernameField:'email',
     passwordField: 'password',
+    session: true,
     passReqToCallback : true // allows us to pass back the entire request to the callback
 },
 function(req, email, password, done) {
@@ -154,3 +146,14 @@ function(req, email, password, done) {
         return done(null, user);
     });
 }));
+
+
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+  user.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
