@@ -15,6 +15,8 @@ const checkError = (type, value) => {
   switch (type) {
     case 'email':
       return validateEmail(value);
+    case 'username':
+      return validateUsername(value);
     case 'password':
       return validatePassword(value);
     default:
@@ -42,6 +44,18 @@ const validatePassword = password => {
     errorMessage = 'Required';
   } else if (password.length < 6) {
     errorMessage = 'Password must be at least 6 characters';
+  }
+
+  return errorMessage;
+};
+
+const validateUsername = username => {
+  let errorMessage = '';
+
+  if (!username) {
+    errorMessage = 'Required';
+  } else if (username.length < 3) {
+    errorMessage = 'Username must be at least 3 characters';
   }
 
   return errorMessage;

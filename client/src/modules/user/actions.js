@@ -35,3 +35,41 @@ const signIn = ({ email, password }) => dispatch => {
 };
 
 export { signIn };
+
+//SignUp
+
+const signUp = ({ username, email, password }) => dispatch => {
+  return new Promise(async (resolve, reject) => {
+    dispatch({ type: TYPES.SIGN_UP_REQUEST });
+
+    try {
+      const response = await axios.post(`${SERVER_URI}/auth/signup`, {
+        username,
+        email,
+        password,
+      });
+
+      dispatch({
+        type: TYPES.SIGN_UP_SUCCESS,
+        payload: {
+          user: response,
+        },
+      });
+
+      resolve();
+    } catch (error) {
+      dispatch({
+        type: TYPES.SIGN_UP_FAILURE,
+        error: true,
+        payload: {
+          message: error.response.data.message,
+        },
+      });
+
+      reject();
+    }
+  });
+};
+
+export { signUp };
+

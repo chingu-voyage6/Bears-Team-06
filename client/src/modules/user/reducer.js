@@ -17,6 +17,13 @@ const reducer = (state = initialState, action) => {
         role: (user && user.role) || 'user',
         profile: user,
       };
+    case TYPES.SIGN_UP_SUCCESS:
+      const userOne = action.payload.userOne;
+      return {
+        authenticated: true,
+        role: (userOne && userOne.role) || 'user',
+        profile: userOne,
+    };
     default:
       return state;
   }
