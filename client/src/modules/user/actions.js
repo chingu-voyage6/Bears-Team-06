@@ -14,9 +14,7 @@ const signIn = ({ email, password }) => dispatch => {
 
       dispatch({
         type: TYPES.SIGN_IN_SUCCESS,
-        payload: {
-          user: response,
-        },
+        payload: response.data
       });
 
       resolve();
@@ -34,8 +32,6 @@ const signIn = ({ email, password }) => dispatch => {
   });
 };
 
-export { signIn };
-
 //SignUp
 
 const signUp = ({ username, email, password }) => dispatch => {
@@ -44,16 +40,15 @@ const signUp = ({ username, email, password }) => dispatch => {
 
     try {
       const response = await axios.post(`${SERVER_URI}/auth/signup`, {
-        username,
         email,
         password,
       });
 
+      console.log(response)
+
       dispatch({
         type: TYPES.SIGN_UP_SUCCESS,
-        payload: {
-          user: response,
-        },
+        payload: response.data
       });
 
       resolve();
@@ -71,5 +66,5 @@ const signUp = ({ username, email, password }) => dispatch => {
   });
 };
 
-export { signUp };
+export { signIn, signUp };
 

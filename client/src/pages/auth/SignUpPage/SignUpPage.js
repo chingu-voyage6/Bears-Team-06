@@ -26,7 +26,7 @@ class SignUpPage extends React.Component {
           initialValues={{
             username: '',
             email: '',
-            password: '',
+            password: ''
           }}
           validate={validate}
           onSubmit={this.submit}

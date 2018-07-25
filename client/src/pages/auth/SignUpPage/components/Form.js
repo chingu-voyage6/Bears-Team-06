@@ -51,12 +51,13 @@ const InnerForm = ({
         <label>Confirm Password</label>
         <Input
           type="password"
-          name="password"
+          name="confirmPassword"
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.password}
+          value={values.Password}
         />
-        {touched.password && errors.password && <div>{errors.password}</div>}
+        
+        {touched.confirmPassword && errors.confirmPassword && <div>{errors.confirmPassword}</div>}        
       </InputContainer>
       {errorMessage && <p>{errorMessage}</p>}
       <button type="submit" disabled={isSubmitting || !isEmpty(errors)}>
