@@ -66,5 +66,16 @@ const signUp = ({ username, email, password }) => dispatch => {
   });
 };
 
+//Add goal
+// export function createGoal(values, callback) {
+//   const request = axios.post(`${SERVER_URI}/goals${API_KEY}`, values)
+//       .then (() => callback());
+
+//   return {
+//       type: CREATE_GOAL,
+//       payload: request
+//   };
+// }
+
 export { signIn, signUp };
 
