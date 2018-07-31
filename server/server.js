@@ -10,15 +10,16 @@ const session = require('express-session');
 
 const app = express();
 
-const port = 3000;
+const port = 7000;
 
 //connect to db
 mongoose.connect(keys.mongodb.dbURI, ()=>{
   console.log("connected");
 })
 
-// For Passport
 app.use(cors());
+
+// For Passport
 app.use(session({ secret: 'secret',resave: true, saveUninitialized:true})); // session secret
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
