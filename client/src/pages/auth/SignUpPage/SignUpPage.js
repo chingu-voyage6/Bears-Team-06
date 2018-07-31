@@ -5,14 +5,14 @@ import { Formik } from 'formik';
 import AuthLayout from 'layouts/AuthLayout';
 import Form from './components/Form';
 // Misc
-import { signIn, SIGN_IN } from 'modules/user';
+import { signUp, SIGN_UP } from 'modules/user';
 import { loadingSelector, errorMessageSelector } from 'modules/selectors';
 import validate from 'utilities/validate';
 
-class SignInPage extends React.Component {
+class SignUpPage extends React.Component {
   submit = (values, actions) => {
     this.props
-      .signIn(values)
+      .signUp(values)
       .then(() => actions.setSubmitting(false))
       .catch(() => actions.setSubmitting(false));
   };
@@ -24,8 +24,9 @@ class SignInPage extends React.Component {
       <AuthLayout>
         <Formik
           initialValues={{
+            username: '',
             email: '',
-            password: '',
+            password: ''
           }}
           validate={validate}
           onSubmit={this.submit}
@@ -41,8 +42,8 @@ class SignInPage extends React.Component {
 
 export default connect(
   state => ({
-    loading: loadingSelector([SIGN_IN])(state),
-    errorMessage: errorMessageSelector([SIGN_IN])(state),
+    loading: loadingSelector([SIGN_UP])(state),
+    errorMessage: errorMessageSelector([SIGN_UP])(state),
   }),
-  { signIn },
-)(SignInPage);
+  { signUp },
+)(SignUpPage);

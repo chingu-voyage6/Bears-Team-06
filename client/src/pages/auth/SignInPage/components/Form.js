@@ -11,6 +11,7 @@ const InnerForm = ({
   handleSubmit,
   isSubmitting,
   isLoading,
+  errorMessage,
 }) => (
   <Form onSubmit={handleSubmit}>
     <InputContainer>
@@ -35,6 +36,7 @@ const InnerForm = ({
       />
       {touched.password && errors.password && <div>{errors.password}</div>}
     </InputContainer>
+    {errorMessage && <p>{errorMessage}</p>}
     <button type="submit" disabled={isSubmitting || !isEmpty(errors)}>
       Submit
     </button>

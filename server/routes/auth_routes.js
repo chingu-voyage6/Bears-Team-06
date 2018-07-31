@@ -63,7 +63,8 @@ router.post('/signin', function(req, res, next) {
 
 //signup with email
 router.post('/signup', function(req, res) {
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
+  
 
   //* Validate email + password
 
