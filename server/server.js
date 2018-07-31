@@ -29,7 +29,7 @@ app.use(passport.session()); // persistent login sessions
 const authRoutes     = require('./routes/auth_routes');
 const goalRoutes     = require('./routes/goal_routes');
 app.use('/auth',authRoutes);
-app.use('/goal',goalRoutes);
+app.use('/goal', passport.authenticate('jwt', {session:false}), goalRoutes);
 
 app.listen(port, () => {
   console.log('We are live on ' + port);

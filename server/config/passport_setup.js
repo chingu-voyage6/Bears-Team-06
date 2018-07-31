@@ -1,11 +1,33 @@
 const passport  = require('passport');
+const passportJWT  = require('passport-jwt');
 const request = require('request');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
 
 const keys = require('./pass_keys');
 const User = require('../models/user');
+
+passport.use(new JWTStrategy({
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey: "bears"
+  },
+  function(jwt_payload, done) {
+    User.findOne({_id: jwt_payload.sub}, function(err, user) {
+        if (err) {
+            return done(err, false);
+        }
+        
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+            // or you could create a new account
+        }
+    });
+}));
 
 passport.use(
     new GoogleStrategy({
@@ -13,7 +35,7 @@ passport.use(
         clientID: keys.google.clientID,
         clientSecret: keys.google.clientSecret,
         callbackURL: '/auth/google/redirect',
-        session: true,
+        session: false,
         passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       if (req.user) {
@@ -68,7 +90,7 @@ passport.use(
     clientSecret:keys.facebook.clientSecret,
     callbackURL: '/auth/facebook/redirect',
     profileFields: ['name', 'email'],
-    session: true,
+    session: false,
     passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
   if (req.user) {
@@ -120,7 +142,7 @@ passport.use(
 passport.use(new LocalStrategy({
     usernameField:'email',
     passwordField: 'password',
-    session: true,
+    session: false,
     passReqToCallback : true // allows us to pass back the entire request to the callback
 },
 function(req, email, password, done) {
@@ -149,11 +171,11 @@ function(req, email, password, done) {
 
 
 passport.serializeUser(function(user, done) {
-    done(null, user._id);
+    done(null, User._id);
 });
 
 passport.deserializeUser(function(id, done) {
-  user.findById(id, function(err, user) {
+  User.findById(id, function(err, user) {
     done(err, user);
   });
 });

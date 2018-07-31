@@ -52,6 +52,7 @@ router.post('/signin', function(req, res, next) {
       res.status(400).send(info);
       return;
     }
+    var jwt_payload = user._id;
     res.status(200).json({
       userId: user._id,
       email: user.local.email,
