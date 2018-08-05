@@ -15,7 +15,7 @@ router.get(
 );
 router.get(
   '/google/redirect',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/signin' }),
   (req, res) => {
     res.json({
       userId: req.user._id,
@@ -31,7 +31,7 @@ router.get(
 );
 router.get(
   '/facebook/redirect',
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  passport.authenticate('facebook', { failureRedirect: '/signin' }),
   (req, res) => {
     res.status(200).json({
       userId: req.user._id,
@@ -52,6 +52,7 @@ router.post('/signin', function(req, res, next) {
       res.status(400).send(info);
       return;
     }
+    var jwt_payload = user._id;
     res.status(200).json({
       userId: user._id,
       email: user.local.email,
@@ -103,5 +104,6 @@ router.post('/signup', function(req, res) {
     });
   });
 });
+
 
 module.exports = router;
