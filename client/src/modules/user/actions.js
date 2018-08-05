@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as TYPES from './types';
 import SERVER_URI from 'config/server';
+import CREATE_GOAL from 'modules/user';
 
 const signIn = ({ email, password }) => dispatch => {
   return new Promise(async (resolve, reject) => {
@@ -67,15 +68,12 @@ const signUp = ({ username, email, password }) => dispatch => {
 };
 
 //Add goal
-// export function createGoal(values, callback) {
-//   const request = axios.post(`${SERVER_URI}/goals${API_KEY}`, values)
-//       .then (() => callback());
-
-//   return {
-//       type: CREATE_GOAL,
-//       payload: request
-//   };
-// }
+export function createGoal(goal, numberOfDay) {
+  console.log(goal, numberOfDay) 
+  return {
+    type: CREATE_GOAL
+  }
+}
 
 export { signIn, signUp };
 

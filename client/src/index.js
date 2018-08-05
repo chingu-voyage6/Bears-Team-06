@@ -1,6 +1,5 @@
 import './config/firebase';
 import './config/styles/reset.css';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -9,7 +8,7 @@ import store from './modules/store';
 
 const App = () => (
   <Provider store={store}>
-    <Routes />
+    <Routes />    
   </Provider>
 );
 
