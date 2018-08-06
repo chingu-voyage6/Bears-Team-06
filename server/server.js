@@ -10,7 +10,7 @@ const session = require('express-session');
 
 const app = express();
 
-const port = 7000;
+const port = 8000;
 
 //connect to db
 mongoose.connect(keys.mongodb.dbURI, ()=>{

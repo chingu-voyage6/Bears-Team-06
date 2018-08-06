@@ -8,6 +8,7 @@ var goalSchema = new mongoose.Schema({
   bounty_amount: Number,
   non_profit: String,
   due_date: Date,
+  last_check_in: Date,
   created_at: { type: Date, default: Date.now }
 });
 
