@@ -36,7 +36,7 @@ router.post('/submit', function(req, res) {
  });
 
 //get all goals
-router.get('/check', function(req, res) {
+router.get('/', function(req, res) {
   const user_id = req.user._id;
      // if no user set
      if(!user_id){
